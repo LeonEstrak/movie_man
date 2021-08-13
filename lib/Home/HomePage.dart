@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:movie_man/AddMovie.dart';
 import 'package:movie_man/Home/Drawer/Drawer.dart';
 import 'package:movie_man/Home/MovieItemCard.dart';
+import 'package:movie_man/Services/Authentication.dart';
 import 'package:movie_man/Services/Database.dart';
 
 class HomePage extends StatefulWidget {
@@ -48,29 +49,48 @@ class _HomePageState extends State<HomePage> {
                 ),
               ]),
             ),
-            ValueListenableBuilder(
-                valueListenable: Hive.box<MovieModel>("data").listenable(),
-                builder: (BuildContext context, Box<MovieModel> box, _) {
-                  if (box.length == 0) {
+            FutureBuilder(
+                future: Hive.openBox<MovieModel>(
+                    Authentication.auth.currentUser!.uid),
+                builder: (context, AsyncSnapshot<Box<MovieModel>> snapshot) {
+                  if (snapshot.hasData) {
+                    Box<MovieModel> box = snapshot.data!;
+                    return ValueListenableBuilder(
+                        valueListenable: box.listenable(),
+                        builder:
+                            (BuildContext context, Box<MovieModel> box, _) {
+                          if (box.length == 0) {
+                            return Center(
+                              child: Text(
+                                "No Movies Added yet",
+                                style: TextStyle(
+                                    fontSize: 20, fontStyle: FontStyle.italic),
+                              ),
+                            );
+                          }
+                          return ListView.builder(
+                              padding: EdgeInsets.all(10),
+                              controller: widget.controller,
+                              shrinkWrap: true,
+                              itemCount: box.length,
+                              itemBuilder: (BuildContext buildContext,
+                                      int index) =>
+                                  MovieItemCard(
+                                      index: index,
+                                      movieName:
+                                          "${box.getAt(index)!.movieName}",
+                                      directorName:
+                                          "${box.getAt(index)!.directorName}",
+                                      posterURL: box.getAt(index)!.posterPath));
+                        });
+                  }
+                  if (snapshot.hasError) {
                     return Center(
-                      child: Text(
-                        "No Movies Added yet",
-                        style: TextStyle(
-                            fontSize: 20, fontStyle: FontStyle.italic),
-                      ),
+                      child: Text(snapshot.error.toString()),
                     );
                   }
-                  return ListView.builder(
-                      padding: EdgeInsets.all(10),
-                      controller: widget.controller,
-                      shrinkWrap: true,
-                      itemCount: box.length,
-                      itemBuilder: (BuildContext buildContext, int index) =>
-                          MovieItemCard(
-                              index: index,
-                              movieName: "${box.getAt(index)!.movieName}",
-                              directorName: "${box.getAt(index)!.directorName}",
-                              posterURL: box.getAt(index)!.posterPath));
+
+                  return Center(child: CircularProgressIndicator());
                 })
           ],
         ),
@@ -78,7 +98,6 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
-            // Authentication.signOut();
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,

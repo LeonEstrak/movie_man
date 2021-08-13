@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:movie_man/Services/Authentication.dart';
 import 'package:movie_man/Services/Database.dart';
 
 class AddMovie extends StatefulWidget {
@@ -13,6 +14,7 @@ class AddMovie extends StatefulWidget {
 }
 
 class _AddMovieState extends State<AddMovie> {
+  final formKey = GlobalKey<FormState>();
   Future pickImage(ImageSource source) async {
     XFile? selected = await new ImagePicker().pickImage(source: source);
     setState(() {
@@ -30,7 +32,7 @@ class _AddMovieState extends State<AddMovie> {
     fit: BoxFit.cover,
   );
 
-  String? movieName, directorName;
+  String movieName = "", directorName = "";
   String errorMessage = "";
   @override
   Widget build(BuildContext context) {
@@ -71,20 +73,33 @@ class _AddMovieState extends State<AddMovie> {
             Padding(
               padding: EdgeInsets.all(20),
               child: Form(
+                  key: formKey,
                   child: Column(
-                children: [
-                  TextFormField(
-                    decoration:
-                        InputDecoration(labelText: "Enter Name of Movie"),
-                    onChanged: (value) => movieName = value,
-                  ),
-                  TextFormField(
-                    decoration:
-                        InputDecoration(labelText: "Enter Name of Director"),
-                    onChanged: (value) => directorName = value,
-                  ),
-                ],
-              )),
+                    children: [
+                      TextFormField(
+                        decoration:
+                            InputDecoration(labelText: "Enter Name of Movie"),
+                        onChanged: (value) => movieName = value,
+                        validator: (value) => value == ""
+                            ? "Movie Name cannot be blank"
+                            : Hive.box<MovieModel>(
+                                        Authentication.auth.currentUser!.uid)
+                                    .values
+                                    .any((element) =>
+                                        element.movieName
+                                            .trim()
+                                            .toLowerCase() ==
+                                        movieName.trim().toLowerCase())
+                                ? "Movie Already Exists"
+                                : null,
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                            labelText: "Enter Name of Director"),
+                        onChanged: (value) => directorName = value,
+                      ),
+                    ],
+                  )),
             ),
             Text(
               errorMessage,
@@ -92,20 +107,13 @@ class _AddMovieState extends State<AddMovie> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  if (movieName != null &&
-                      directorName != null &&
-                      file != null) {
-                    if (Hive.box<MovieModel>("data")
-                        .values
-                        .any((element) => element.movieName == movieName)) {
-                      setState(() {
-                        errorMessage = "Movie Already Exists";
-                      });
-                    } else {
-                      DatabaseServices.addMovie(
-                          movieName!, directorName!, file!);
-                      Navigator.of(context, rootNavigator: true).pop('dialog');
-                    }
+                  if (file == null) {
+                    setState(() {
+                      errorMessage = "Add a Movie Poster";
+                    });
+                  } else if (formKey.currentState!.validate()) {
+                    DatabaseServices.addMovie(movieName, directorName, file!);
+                    Navigator.of(context, rootNavigator: true).pop('dialog');
                   }
                 },
                 child: Text("Submit")),

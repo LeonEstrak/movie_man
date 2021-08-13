@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:movie_man/Services/Authentication.dart';
 import 'package:movie_man/Services/Database.dart';
 
 class EditMovie extends StatefulWidget {
@@ -20,6 +21,8 @@ class EditMovie extends StatefulWidget {
 }
 
 class _EditMovieState extends State<EditMovie> {
+  final formKey = GlobalKey<FormState>();
+
   Future pickImage(ImageSource source) async {
     XFile? selected = await new ImagePicker().pickImage(source: source);
     setState(() {
@@ -89,6 +92,16 @@ class _EditMovieState extends State<EditMovie> {
                   initialValue: updatedMovieName,
                   decoration: InputDecoration(labelText: "Enter Name of Movie"),
                   onChanged: (value) => updatedMovieName = value,
+                  validator: (value) => value == ""
+                      ? "Movie Name cannot be blank"
+                      : Hive.box<MovieModel>(
+                                  Authentication.auth.currentUser!.uid)
+                              .values
+                              .any((element) =>
+                                  element.movieName.trim().toLowerCase() ==
+                                  updatedMovieName!.trim().toLowerCase())
+                          ? "Movie Already Exists"
+                          : null,
                 ),
                 TextFormField(
                   initialValue: updatedDirectorName,
@@ -105,19 +118,14 @@ class _EditMovieState extends State<EditMovie> {
           ),
           ElevatedButton(
               onPressed: () {
-                if (updatedMovieName != null &&
-                    updatedDirectorName != null &&
-                    file != null) {
-                  if (Hive.box<MovieModel>("data").values.any(
-                      (element) => element.movieName == updatedMovieName)) {
-                    setState(() {
-                      errorMessage = "Movie Already Exists";
-                    });
-                  } else {
-                    DatabaseServices.updateMovie(widget.index,
-                        updatedMovieName!, updatedDirectorName!, file!);
-                    Navigator.of(context, rootNavigator: true).pop('dialog');
-                  }
+                if (file == null) {
+                  setState(() {
+                    errorMessage = "Add a Movie Poster";
+                  });
+                } else if (formKey.currentState!.validate()) {
+                  DatabaseServices.updateMovie(widget.index, updatedMovieName!,
+                      updatedDirectorName!, file!);
+                  Navigator.of(context, rootNavigator: true).pop('dialog');
                 }
               },
               child: Text("Submit")),

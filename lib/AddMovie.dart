@@ -35,76 +35,82 @@ class _AddMovieState extends State<AddMovie> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
+      height: MediaQuery.of(context).size.height * 0.9,
       width: MediaQuery.of(context).size.width * 0.9,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(25.0),
-            child: Text(
-              "Add Movie",
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(25.0),
+              child: Text(
+                "Add Movie",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          GestureDetector(
-            onTap: () => pickImage(ImageSource.gallery),
-            child: Container(
-              height: 150,
-              width: 150,
-              clipBehavior: Clip.hardEdge,
-              child: file != null
-                  ? Image.file(
-                      file!,
-                      fit: BoxFit.cover,
-                    )
-                  : defaultImage,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                color: Colors.black12,
+            GestureDetector(
+              onTap: () => pickImage(ImageSource.gallery),
+              child: Container(
+                height: 150,
+                width: 150,
+                clipBehavior: Clip.hardEdge,
+                child: file != null
+                    ? Image.file(
+                        file!,
+                        fit: BoxFit.cover,
+                      )
+                    : defaultImage,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.black12,
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Form(
-                child: Column(
-              children: [
-                TextFormField(
-                  decoration: InputDecoration(labelText: "Enter Name of Movie"),
-                  onChanged: (value) => movieName = value,
-                ),
-                TextFormField(
-                  decoration:
-                      InputDecoration(labelText: "Enter Name of Director"),
-                  onChanged: (value) => directorName = value,
-                ),
-              ],
-            )),
-          ),
-          Text(
-            errorMessage,
-            style: TextStyle(color: Colors.red),
-          ),
-          ElevatedButton(
-              onPressed: () {
-                if (movieName != null && directorName != null && file != null) {
-                  if (Hive.box<MovieModel>("data")
-                      .values
-                      .any((element) => element.movieName == movieName)) {
-                    setState(() {
-                      errorMessage = "Movie Already Exists";
-                    });
-                  } else {
-                    DatabaseServices.addMovie(movieName!, directorName!, file!);
-                    Navigator.of(context, rootNavigator: true).pop('dialog');
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Form(
+                  child: Column(
+                children: [
+                  TextFormField(
+                    decoration:
+                        InputDecoration(labelText: "Enter Name of Movie"),
+                    onChanged: (value) => movieName = value,
+                  ),
+                  TextFormField(
+                    decoration:
+                        InputDecoration(labelText: "Enter Name of Director"),
+                    onChanged: (value) => directorName = value,
+                  ),
+                ],
+              )),
+            ),
+            Text(
+              errorMessage,
+              style: TextStyle(color: Colors.red),
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  if (movieName != null &&
+                      directorName != null &&
+                      file != null) {
+                    if (Hive.box<MovieModel>("data")
+                        .values
+                        .any((element) => element.movieName == movieName)) {
+                      setState(() {
+                        errorMessage = "Movie Already Exists";
+                      });
+                    } else {
+                      DatabaseServices.addMovie(
+                          movieName!, directorName!, file!);
+                      Navigator.of(context, rootNavigator: true).pop('dialog');
+                    }
                   }
-                }
-              },
-              child: Text("Submit")),
-        ],
+                },
+                child: Text("Submit")),
+          ],
+        ),
       ),
     );
   }

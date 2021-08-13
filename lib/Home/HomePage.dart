@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:movie_man/AddMovie.dart';
 import 'package:movie_man/Home/MovieItemCard.dart';
+import 'package:movie_man/Services/Authentication.dart';
 import 'package:movie_man/Services/Database.dart';
 
 class HomePage extends StatefulWidget {
@@ -54,6 +55,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
+            // Authentication.signOut();
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,

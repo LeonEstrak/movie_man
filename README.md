@@ -1,16 +1,26 @@
-# movie_man
+<p align="center">
+  <img src="https://imgur.com/DauGuwI.png" width="350px">
+</p>
+<h2 align="center">The Movie Tracker</h2>
 
-A new Flutter project.
+A Flutter Application where you can track all the movies you have watched
 
-## Getting Started
+## Features
+- Simple and Intuitive
+- Add any Movie with Movie Name, Director Name(optional) and a Movie Poster from your gallery
+- View a list of all the movies that you have added
+- Update or Remove any movie at any moment
+- Blazing fast login using your Google Account
+- Multi-User Movie tracking available
+- Snappy Read and Writes since all data is kept offline
 
-This project is a starting point for a Flutter application.
+## Codebase
+- Uses Google OAuth for Authentication
+- Uses Hive as a on-device NoSQL database
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Future Scope
+- [ ] Backup data onto firestore asynchronously
+- [ ] Implement a Search functionality
+- [ ] Use an API to fetch Movie details and Posters when only Movie Name is provided (possible IMDb API) 
+- [ ] Implement segretaion of movies by **Watched** and **Unwatched** 
+- [ ] Connect to FireStore for cloud backups

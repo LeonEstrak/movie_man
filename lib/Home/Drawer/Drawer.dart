@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_man/Services/Authentication.dart';
 
+/// Profile Page that is rendered on the Drawer
 class ProfileDrawer extends StatefulWidget {
   const ProfileDrawer({Key? key, required this.scaffoldKey}) : super(key: key);
   final GlobalKey<ScaffoldState> scaffoldKey;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_man/EditMovie.dart';
 import 'package:movie_man/Services/Database.dart';
 
+/// The Card in the List which displays all the Movie details
 class MovieItemCard extends StatefulWidget {
   const MovieItemCard(
       {Key? key,

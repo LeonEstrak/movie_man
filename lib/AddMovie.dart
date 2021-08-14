@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:movie_man/Services/Authentication.dart';
 import 'package:movie_man/Services/Database.dart';
 
+/// The Widget in the Bottom Sheet which allows addition of movies to the list
 class AddMovie extends StatefulWidget {
   AddMovie({Key? key}) : super(key: key);
   @override
@@ -15,6 +16,9 @@ class AddMovie extends StatefulWidget {
 
 class _AddMovieState extends State<AddMovie> {
   final formKey = GlobalKey<FormState>();
+
+  /// Picks Image using the ImagePicker library and sets [file] to
+  /// the picked image
   Future pickImage(ImageSource source) async {
     XFile? selected = await new ImagePicker().pickImage(source: source);
     setState(() {

@@ -9,18 +9,22 @@ import 'package:movie_man/Services/Database.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
+  /// This is used to ensure that the connection exists between this top layer
+  /// and the flutter engine where the native code resides
   WidgetsFlutterBinding.ensureInitialized();
+
+  /// ALl of this below makes calls on native code
   await Hive.initFlutter();
   Hive.registerAdapter(MovieModelAdapter());
-
   await Hive.openBox<MovieModel>('data');
 
+  /// This too
   await Firebase.initializeApp();
+
   runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -30,11 +34,15 @@ class MainApp extends StatelessWidget {
   }
 }
 
+/// Checks whether a user has logged in or not
+/// If logged in , renders the HomePage
+/// If not logged in , renders the LoginPage
 class CheckAuthentication extends StatelessWidget {
   const CheckAuthentication({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    /// Uses StreamBuilder to keep real-time track of auth activities
     return StreamBuilder(
       stream: Authentication.auth.authStateChanges(),
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {

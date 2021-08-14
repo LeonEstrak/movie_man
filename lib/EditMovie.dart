@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:movie_man/Services/Authentication.dart';
 import 'package:movie_man/Services/Database.dart';
 
+/// This widget is called on the Bottom Sheet when any list item is to be edited
 class EditMovie extends StatefulWidget {
   EditMovie(
       {Key? key,
@@ -23,6 +24,8 @@ class EditMovie extends StatefulWidget {
 class _EditMovieState extends State<EditMovie> {
   final formKey = GlobalKey<FormState>();
 
+  /// Picks Image using the ImagePicker library and sets [file] to
+  /// the picked image
   Future pickImage(ImageSource source) async {
     XFile? selected = await new ImagePicker().pickImage(source: source);
     setState(() {

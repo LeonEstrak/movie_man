@@ -7,9 +7,17 @@ import 'package:movie_man/Home/MovieItemCard.dart';
 import 'package:movie_man/Services/Authentication.dart';
 import 'package:movie_man/Services/Database.dart';
 
+/// The Home Page which builds on a Scaffold, has a Drawer and a BottomSheet
+/// Shows the List of all the Movies that have been registered
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
+
+  /// Since multiple Columns/ListViews exist in nested format, a single
+  /// controller widget is used for all of them, combining all of them into a
+  /// single scrollable Widget
   final controller = ScrollController();
+
+  /// Scaffold Key used for opening and clossing the drawer
   final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   _HomePageState createState() => _HomePageState();
@@ -49,12 +57,16 @@ class _HomePageState extends State<HomePage> {
                 ),
               ]),
             ),
+
+            /// Waits for the Hive box to open
             FutureBuilder(
                 future: Hive.openBox<MovieModel>(
                     Authentication.auth.currentUser!.uid),
                 builder: (context, AsyncSnapshot<Box<MovieModel>> snapshot) {
                   if (snapshot.hasData) {
                     Box<MovieModel> box = snapshot.data!;
+
+                    /// Listens to all the changes made to box and updates everytime
                     return ValueListenableBuilder(
                         valueListenable: box.listenable(),
                         builder:
@@ -68,6 +80,10 @@ class _HomePageState extends State<HomePage> {
                               ),
                             );
                           }
+
+                          /// Since the requirement was to create a list that is scrollable
+                          /// infinitely, builder was used, since it calls the build methods
+                          /// only when the object is visible on the screen. #optimization
                           return ListView.builder(
                               padding: EdgeInsets.all(10),
                               controller: widget.controller,

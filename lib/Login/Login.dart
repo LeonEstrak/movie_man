@@ -3,6 +3,7 @@ import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:movie_man/Services/Authentication.dart';
 
+/// Login Page which shows the Movie Man Banner and Login Button
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 

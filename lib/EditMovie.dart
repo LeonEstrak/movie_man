@@ -54,14 +54,14 @@ class _EditMovieState extends State<EditMovie> {
     }
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
+      height: MediaQuery.of(context).size.height * 0.9,
       width: MediaQuery.of(context).size.width * 0.9,
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(25.0),
             child: Text(
-              "Add Movie",
+              "Edit Movie",
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -89,31 +89,37 @@ class _EditMovieState extends State<EditMovie> {
           Padding(
             padding: EdgeInsets.all(20),
             child: Form(
+                key: formKey,
                 child: Column(
-              children: [
-                TextFormField(
-                  initialValue: updatedMovieName,
-                  decoration: InputDecoration(labelText: "Enter Name of Movie"),
-                  onChanged: (value) => updatedMovieName = value,
-                  validator: (value) => value == ""
-                      ? "Movie Name cannot be blank"
-                      : Hive.box<MovieModel>(
-                                  Authentication.auth.currentUser!.uid)
-                              .values
-                              .any((element) =>
-                                  element.movieName.trim().toLowerCase() ==
-                                  updatedMovieName!.trim().toLowerCase())
-                          ? "Movie Already Exists"
-                          : null,
-                ),
-                TextFormField(
-                  initialValue: updatedDirectorName,
-                  decoration:
-                      InputDecoration(labelText: "Enter Name of Director"),
-                  onChanged: (value) => updatedDirectorName = value,
-                ),
-              ],
-            )),
+                  children: [
+                    TextFormField(
+                      initialValue: updatedMovieName,
+                      decoration:
+                          InputDecoration(labelText: "Enter Name of Movie"),
+                      onChanged: (value) => updatedMovieName = value,
+                      validator: (value) => value == ""
+                          ? "Movie Name cannot be blank"
+                          : Hive.box<MovieModel>(
+                                      Authentication.auth.currentUser!.uid)
+                                  .values
+                                  .any((element) =>
+                                      element.movieName.trim().toLowerCase() ==
+                                          updatedMovieName!
+                                              .trim()
+                                              .toLowerCase() &&
+                                      updatedMovieName!.trim().toLowerCase() !=
+                                          widget.movieName.trim().toLowerCase())
+                              ? "Movie Already Exists"
+                              : null,
+                    ),
+                    TextFormField(
+                      initialValue: updatedDirectorName,
+                      decoration:
+                          InputDecoration(labelText: "Enter Name of Director"),
+                      onChanged: (value) => updatedDirectorName = value,
+                    ),
+                  ],
+                )),
           ),
           Text(
             errorMessage,
